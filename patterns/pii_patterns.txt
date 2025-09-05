@@ -1,0 +1,11 @@
+\b(balance|outstanding|amount owed|total due|due amount|current balance)\b
+\b(account (number|no\.?|id)|acct\.?\s*no\.?)\b
+\b(last four|last 4|last-4)\b
+\b(credit card|card number|cvv|expiration date|expiry)\b
+\b(social security|ssn|social security number|ssn:?)\b
+\b(date of birth|dob|d\.o\.b\.?)\b
+\b(address|mailing address|street|apt|unit)\b
+\b(transaction id|txn id|payment of)\b
+\b(payment plan|installment|emi)\b
+\b(do not call|do-not-call|dnc|do not call list)\b
+# Add more domain keywords below

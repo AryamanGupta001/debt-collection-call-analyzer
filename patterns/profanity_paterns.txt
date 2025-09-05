@@ -1,0 +1,8 @@
+\b(f+[\W_]*u+[\W_]*c+[\W_]*k+)\b
+\b(s+[\W_]*h+[\W_]*i+[\W_]*t+)\b
+\b(b+[\W_]*i+[\W_]*t+[\W_]*c+[\W_]*h+)\b
+\b(a+[\W_]*s+[\W_]*s+)\b
+\b(d+[\W_]*i+[\W_]*c+[\W_]*k+)\b
+\b(c+[\W_]*u+[\W_]*n+[\W_]*t+)\b
+\b(m+[\W_]*o+[\W_]*t+[\W_]*h+[\W_]*e+[\W_]*r+[\W_]*f+[\W_]*u+[\W_]*c+[\W_]*k+)\b
+# Add localized/regional slurs or slang below, one per line
