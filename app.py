@@ -126,7 +126,8 @@ if results:
             st.markdown("**Timeline Visualization**")
             fig = timeline_figure(r['utterances'])
             if fig:
-                st.plotly_chart(fig, use_container_width=True)
+                # Add a unique key based on the call_id
+                st.plotly_chart(fig, use_container_width=True, key=f"timeline_{r['call_id']}")
                 col1, col2 = st.columns([2, 1])
                 with col1:
                     st.markdown("""
@@ -138,6 +139,7 @@ if results:
 """, unsafe_allow_html=True)
                 with col2:
                     pie_fig = talk_share_pie(r['utterances'])
-                    st.plotly_chart(pie_fig, use_container_width=True)
+                    # Also add a unique key for the pie chart
+                    st.plotly_chart(pie_fig, use_container_width=True, key=f"pie_{r['call_id']}")
             else:
                 st.warning("No valid utterance timestamps found for timeline visualization.")
