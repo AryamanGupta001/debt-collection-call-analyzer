@@ -1,125 +1,155 @@
-# Debt Collection Call Analyzer: A Framework for Compliance and Quality Assurance
+# Debt Collection Call Analyzer - AI-ready, auditable compliance for call analysis
 
-![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+![App Screenshot](reports/demo.png)
 
-This project delivers a robust, end-to-end framework for the automated analysis of debt collection call transcripts. It provides actionable intelligence for compliance teams, quantifiable metrics for quality assurance, and a scalable architecture for future enhancements.
-
-The system features an interactive web application for single-call diagnostics and a powerful command-line tool for batch processing thousands of calls, transforming raw call data into clear, auditable insights.
-
-**Live Demo:** **[https://debt-call-analyst.streamlit.app/](https://debt-call-analyst.streamlit.app/)**
-
-![App Screenshot](https://i.imgur.com/your-screenshot-url.png) <!-- It is highly recommended to add a screenshot of your Streamlit app here -->
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg?style=for-the-badge)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Built with Streamlit](https://img.shields.io/badge/built%20with-Streamlit-ff69b4.svg?style=for-the-badge)](https://streamlit.io)
 
 ---
 
-## Key Features & Strategic Assets
+## Why This Exists
 
-*   **Interactive Diagnostic UI:** A deployed Streamlit application provides a user-friendly interface to upload single or multiple call files (including ZIP archives) and receive instant visual analysis.
-*   **Scalable Batch Processing Engine:** A CLI script (`run_batch.py`) processes entire directories of call data, generating executive-ready summaries and detailed evidence logs in both **CSV** and **XLSX** formats.
-*   **Maintainable Business Rules Engine:** Compliance and profanity rules are stored in external text files (`patterns/`). This strategic design allows non-technical users (e.g., compliance officers) to update detection logic without any code changes.
-*   **Auditable Compliance Detection:** The system implements a time-based algorithm to flag a critical violation: disclosing sensitive information *before* borrower identity verification. All findings are supported by utterance-level evidence.
-*   **Quantitative Call Quality Metrics:** Moves quality assurance from subjective to objective by calculating:
-    *   **Overtalk %:** Percentage of the call where both parties are speaking simultaneously.
-    *   **Silence %:** Percentage of the call with no speech.
-    *   **Talk-Share %:** The ratio of talk time between the agent and the borrower.
-*   **High-Fidelity Visualizations:** Each call is rendered as an interactive timeline chart showing speaker activity, highlighting overtalk interruptions and silence periods for quick review.
+Debt collection calls are highly regulated. A single compliance violation (like disclosing sensitive information before verifying borrower identity) can result in **severe legal and financial penalties**. Manual QA reviews are costly, inconsistent, and non-scalable. Compliance teams struggle to keep up, and agent feedback is often inconsistent. This project automates the entire process, providing fast, objective, and fully auditable insights from raw call data.
 
 ---
 
-## Getting Started
+## What It Does
 
-### Prerequisites
--   Python 3.9+
--   `git` for cloning the repository
+The **Debt Collection Call Analyzer** provides an auditable, deterministic framework for analyzing call transcripts. It delivers:
 
-### Installation & Setup
+* 🔍 **Automate Compliance**  
+Detect “verify-before-disclose” violations and profanity with timestamped, reviewable evidence. Every flag is backed by deterministic logic—ideal for audits and legal defensibility.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/AryamanGupta001/debt-collection-call-analyzer.git
-    cd all-convo-analysis
-    ```
+* 📊 **Quantify Call Quality**  
+Replace vague feedback with hard metrics:
+- 🗣️ **Overtalk %** — Measures interruptions and dominance.
+- 🤐 **Silence %** — Flags disengagement or awkward pauses.
+- ⚖️ **Talk-Time Balance** — Visualizes agent vs. borrower speaking share.
 
-2.  **Create and activate a virtual environment:**
-    *   **On macOS / Linux:**
-        ```bash
-        python3 -m venv .venv
-        source .venv/bin/activate
-        ```
-    *   **On Windows:**
-        ```bash
-        python -m venv .venv
-        .\.venv\Scripts\activate
-        ```
+* ⚡ **Increase Efficiency**  
+Analyze thousands of calls in minutes—not weeks—using a high-speed batch processing engine. Outputs are ready for Excel, BI dashboards, or audit workflows.
 
-3.  **Install the required dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+* 🧩 **Empower Non-Technical Users**  
+Externalized rules engine (e.g., `profanity_patterns.txt`, `pii_patterns.txt`) allows compliance teams to update detection logic without touching code. Just edit a text file—no engineering bottlenecks.
 
-### Usage
+Target users:
 
-This project has two primary modes of operation: the interactive web app and the command-line batch processor.
+* Compliance teams in financial institutions
+* QA analysts in BPO/call centers
+* Researchers exploring human-agent interaction
 
-#### 1. Interactive Analysis (Streamlit App)
-Ideal for deep-diving into specific calls, training, or quality assurance reviews.
+---
 
-To run the app:
+## Live Demo
+
+👉 Try the interactive web app on **[Streamlit Cloud](https://debt-call-analyst.streamlit.app/)**
+
+---
+
+## Visual Walkthrough
+
+**Summary Dashboard** – Upload single or multiple transcripts (including `.zip` archives) and instantly see a high-level summary of violations & KPIs, compliance flags and quality metrics for the entire batch.
+
+![Summary Dashboard](reports/SS1.png)
+
+**Interactive Timeline** – Select any call from the summary to perform a deep-dive. This view renders the entire conversation on a timeline, visually highlighting periods of overtalk (interruptions) and silence for rapid, intuitive review.
+
+![Interactive Timeline](reports/SS2.png)
+
+---
+
+## Quick Start
+
 ```bash
+# 1. Clone the repository
+git clone https://github.com/AryamanGupta001/debt-collection-call-analyzer.git
+cd debt-collection-call-analyzer
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Run the interactive app
 streamlit run app.py
 ```
-Your web browser will open with the application interface, ready for you to upload call files.
+---
+## ⚙️ Advanced Usage: Batch Processing
 
-#### 2. Batch Processing (Command-Line)
-Ideal for analyzing large datasets and generating comprehensive reports.
+For analyzing large datasets, the command-line interface is the most powerful tool.
 
-To run the batch script on the sample data:
 ```bash
-# Run in default (relaxed) compliance mode
+# Run analysis on the sample data directory
 python run_batch.py --input_dir data/
 
-# Run in strict compliance mode
+# Run in "strict" mode for more rigorous compliance checks
 python run_batch.py --input_dir data/ --strict
 ```
-Output files (`summary.csv`, `details.csv`, etc.) will be saved in the `results/` directory.
+The output files (`summary.csv`, `details.xlsx`, etc.) will be generated in the `results/` directory, ready for integration with BI tools or other workflows.
+
+---
+## Key Features
+
+* **Interactive Dashboard**: Intuitive charts and visual timelines
+* **Batch Processing CLI**: Scale to thousands of transcripts
+* **Auditable Compliance Logic**: Regex rules tracked and explainable
+* **Quantitative Metrics**: Overtalk %, Silence %, Talk-share
+* **Pluggable Patterns**: Easy-to-edit text files for compliance/profanity rules
 
 ---
 
-## Repository Structure
+## System Architecture
 
+```mermaid
+flowchart LR
+  U[Streamlit UI] --> N[io_json.py]
+  C[run_batch.py] --> N
+  N --> TN[text_norm.py]
+  TN --> M(metrics.py)
+  TN --> PF(profanity.py)
+  TN --> PI(pii_compliance.py)
+  PF --> AGG[Aggregator -> results/]
+  PI --> AGG
+  M --> AGG
+  AGG --> UI[Streamlit Dashboard]
+  AGG --> Reports[reports/]
 ```
-all-convo-analysis/
-├── README.md                # This file
-├── requirements.txt         # Project dependencies
-├── app.py                   # The Streamlit web application
-├── run_batch.py             # The CLI for batch processing
-│
-├── data/                    # Sample call transcript files (JSON/YAML)
-├── patterns/                # Externalized detection rules (editable)
-│   ├── profanity_patterns.txt
-│   └── pii_patterns.txt
-│
-├── results/                 # Output directory for batch reports (CSV/XLSX)
-├── src/                     # Core application source code
-│   ├── io_json.py           # Robust data loading and normalization
-│   ├── metrics.py           # Overtalk, silence, and talk-share calculations
-│   ├── profanity.py         # Profanity detection logic
-│   ├── pii_compliance.py    # PII/compliance violation logic
-│   └── viz.py               # Visualization components (timeline, etc.)
-│
-└── ...```
 
 ---
 
-## Strategic Positioning: Deterministic by Design
+## Roadmap
 
-The decision to use a deterministic (regex-based) engine for this initial version was a deliberate strategic choice. It prioritizes **trust, auditability, and speed-to-value**. Compliance and legal teams can have 100% confidence in the system's findings because every flag is tied to an explicit, human-readable rule.
+* [ ] **Phase 2: ML/LLM integration** for nuanced violation detection
+* [ ] **Containerization with Docker** for seamless deployment
+* [ ] **CI/CD pipeline** for automated testing and code quality
 
-This approach not only delivers immediate value but also creates a high-quality, labeled dataset that will significantly accelerate and de-risk the future development of a more nuanced Machine Learning or LLM-based classifier in a subsequent phase.
+---
+
+## Contributing
+
+We welcome contributions from compliance experts, developers, and researchers.
+
+* Fork the repo & submit PRs
+* Update `patterns/*.txt` with new compliance or profanity rules
+* Add test cases in `tests/`
+
+This project thrives on community contributions. Whether it's reporting a bug, proposing a new feature, or submitting a pull request, your input is valued. Please check the **[Issues Tab](https://github.com/AryamanGupta001/debt-collection-call-analyzer/issues)** to see where you can help.
 
 ---
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+Licensed under the [MIT License](LICENSE).
+
+---
+
+## Maintainers & Contact
+
+Developed by **Aryaman Gupta**
+
+* 📧 Email: [aryamangupta353@gmail.com](mailto:aryamangupta353@gmail.com)
+* 💼 LinkedIn: [Aryaman Gupta](https://www.linkedin.com/in/aryaman-gupta)
+* 🐙 GitHub: [AryamanGupta001](https://github.com/AryamanGupta001)
+
+---
+
+> ⚡ Your README is your landing page. If this project saves your compliance team **hours of manual review**, don’t forget to ⭐ star the repo!
