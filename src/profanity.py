@@ -3,13 +3,27 @@
 import re
 from typing import List, Dict, Any, Optional, Tuple
 from pathlib import Path
+import os
 from .text_norm import normalize
 
 def load_profanity_patterns(path: str = "patterns/profanity_patterns.txt"):
     patterns = []
+    
+    # Try direct path first
     p = Path(path)
+    
+    # If not found, try relative to the module location
     if not p.exists():
+        module_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        p = Path(os.path.join(module_dir, path))
+    
+    if not p.exists():
+        print(f"WARNING: Profanity patterns file not found: {path} or {p}")
         return []
+        
+    print(f"Loading profanity patterns from {p}")
+    
+    # Rest of the function...
     for line in p.read_text(encoding='utf-8').splitlines():
         line = line.strip()
         if not line or line.startswith('#'):
@@ -20,6 +34,8 @@ def load_profanity_patterns(path: str = "patterns/profanity_patterns.txt"):
         except re.error:
             # fallback escape literal
             patterns.append(re.compile(re.escape(line), re.IGNORECASE))
+    
+    print(f"Loaded {len(patterns)} profanity patterns")
     return patterns
 
 PROFANITY_PATTERNS = load_profanity_patterns()

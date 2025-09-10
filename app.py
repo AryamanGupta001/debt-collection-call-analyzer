@@ -5,7 +5,7 @@ from io import StringIO
 import zipfile
 
 from src.io_json import load_file
-from src.profanity import detect_profanity
+from src.profanity import detect_profanity, PROFANITY_PATTERNS
 from src.pii_compliance import detect_compliance_violation
 from src.metrics import overtalk_percentage, silence_percentage, talk_share
 from src.viz import timeline_figure, talk_share_pie
@@ -41,6 +41,10 @@ def process_single_buffer(buffer, name="<uploaded>"):
 
     # profanity
     prof = detect_profanity(utterances)
+
+    # Debug: Loaded profanity hits and patterns
+    st.write(f"Debug: Loaded {len(prof.get('hits', []))} profanity hits")
+    st.write(f"Debug: Profanity patterns: {len(PROFANITY_PATTERNS)} loaded")
 
     # compliance
     comp = detect_compliance_violation(utterances, strict=strict)
@@ -143,3 +147,14 @@ if results:
                     st.plotly_chart(pie_fig, use_container_width=True, key=f"pie_{r['call_id']}")
             else:
                 st.warning("No valid utterance timestamps found for timeline visualization.")
+
+st.sidebar.markdown("## Testing")
+if st.sidebar.button("Test Profanity Detection"):
+    test_utterances = [
+        {"speaker": "agent", "text": "This is a normal statement", "stime": 0, "etime": 2},
+        {"speaker": "borrower", "text": "I don't give a f*ck about that", "stime": 3, "etime": 5},
+        {"speaker": "agent", "text": "Please don't use that language sir", "stime": 6, "etime": 8}
+    ]
+    test_result = detect_profanity(test_utterances)
+    st.sidebar.json(test_result)
+    st.sidebar.write(f"Test found {len(test_result['hits'])} profanity instances")

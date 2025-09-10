@@ -1,6 +1,7 @@
 # Privacy & Compliance violation detection
 # src/pii_compliance.py
 import re
+import os
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from unittest import result
@@ -8,9 +9,22 @@ from .text_norm import normalize
 
 def load_pii_patterns(path="patterns/pii_patterns.txt"):
     pats = []
+    
+    # Try direct path first
     p = Path(path)
+    
+    # If not found, try relative to the module location
     if not p.exists():
+        module_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        p = Path(os.path.join(module_dir, path))
+    
+    if not p.exists():
+        print(f"WARNING: PII patterns file not found: {path} or {p}")
         return []
+    
+    print(f"Loading PII patterns from {p}")
+    
+    # Rest of the function...
     for line in p.read_text(encoding='utf-8').splitlines():
         line = line.strip()
         if not line or line.startswith('#'):
@@ -19,6 +33,8 @@ def load_pii_patterns(path="patterns/pii_patterns.txt"):
             pats.append(re.compile(line, re.IGNORECASE))
         except re.error:
             pats.append(re.compile(re.escape(line), re.IGNORECASE))
+    
+    print(f"Loaded {len(pats)} PII patterns")
     return pats
 
 PII_PATTERNS = load_pii_patterns()

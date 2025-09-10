@@ -1,6 +1,6 @@
 # Debt Collection Call Analyzer - AI-ready, auditable compliance for call analysis
 
-![App Screenshot](reports/demo.png)
+![App Screenshot](reports/demo.gif)
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg?style=for-the-badge)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
@@ -152,4 +152,4 @@ Developed by **Aryaman Gupta**
 
 ---
 
-> ⚡ Your README is your landing page. If this project saves your compliance team **hours of manual review**, don’t forget to ⭐ star the repo!
+> ⚡If this project saves your compliance team **hours of manual review**, don’t forget to ⭐ star the repo!
