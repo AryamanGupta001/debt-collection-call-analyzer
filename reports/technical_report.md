@@ -57,10 +57,10 @@ To ensure the system was robust, maintainable, and user-friendly, we made severa
 
 The system successfully processes call data and outputs a comprehensive summary dashboard in the Streamlit application, with results also exportable to CSV/XLSX.
 
-![Summary Dashboard](reports/SS1.png)
+![Summary Dashboard](SS1.png)
 **Figure 1: Summary Dashboard.** The UI provides an at-a-glance overview of all processed calls, with color-coded flags for immediate identification of issues.
 
-![Interactive Timeline](reports/SS2.png)
+![Interactive Timeline](SS2.png)
 **Figure 2: Interactive Timeline.** For any given call, the timeline visualization provides a granular, second-by-second view of the conversation. Speaker utterances are shown as colored blocks, with overtalk highlighted in orange on the interrupting speaker and silence shown as gaps. This visual evidence is invaluable for agent coaching and dispute resolution.
 
 ---
