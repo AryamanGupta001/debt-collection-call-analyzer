@@ -23,9 +23,9 @@ Detect “verify-before-disclose” violations and profanity with timestamped, r
 
 * 📊 **Quantify Call Quality**  
 Replace vague feedback with hard metrics:
-- 🗣️ **Overtalk %** — Measures interruptions and dominance.
-- 🤐 **Silence %** — Flags disengagement or awkward pauses.
-- ⚖️ **Talk-Time Balance** — Visualizes agent vs. borrower speaking share.
+  - 🗣️ **Overtalk %** — Measures interruptions and dominance.
+  - 🤐 **Silence %** — Flags disengagement or awkward pauses.
+  - ⚖️ **Talk-Time Balance** — Visualizes agent vs. borrower speaking share.
 
 * ⚡ **Increase Efficiency**  
 Analyze thousands of calls in minutes—not weeks—using a high-speed batch processing engine. Outputs are ready for Excel, BI dashboards, or audit workflows.
