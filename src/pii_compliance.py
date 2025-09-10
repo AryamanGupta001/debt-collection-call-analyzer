@@ -53,7 +53,7 @@ def _first_time(utterances: List[Dict[str, Any]], patterns: List[re.Pattern], wh
                 break
     return tmin
 
-def detect_compliance_violation(utterances: List[Dict[str, Any]], strict=False) -> Dict[str, Any]:
+def detect_compliance_violation(utterances: List[Dict[str, Any]], strict=False, path=None) -> Dict[str, Any]:
     """
     Returns:
       - violation: bool
@@ -63,7 +63,11 @@ def detect_compliance_violation(utterances: List[Dict[str, Any]], strict=False) 
       - find earliest verification (agent request OR borrower confirmation)
       - violation if disclosure occurs before verification or if disclosure exists and no verification found
     strict: if True, require borrower confirmation after agent's request to count verification
+    path: optional custom pattern file path
     """
+    # Use custom patterns if path provided
+    patterns = load_pii_patterns(path) if path else PII_PATTERNS
+
     disclose_time = _first_time(utterances, DISCLOSE_KEYWORDS, who='agent')
     # agent verification requests
     verify_agent_time = _first_time(utterances, VERIFY_KEYWORDS, who='agent')

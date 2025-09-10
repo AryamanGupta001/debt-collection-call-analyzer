@@ -1,18 +1,20 @@
-# Debt Collection Call Compliance & Quality Analysis
+# Debt Collection Call Analyzer: Final Technical Report
 
 **Author:** Aryaman Gupta
-
-**Date:** September 6, 2025
-
----
-
-## 2. Executive Summary
-
-This project was designed to rapidly validate the feasibility of an automated compliance and quality analysis system for debt-collection calls, while uncovering key operational insights for future scaling. The delivered system combines a high-speed, deterministic regex-based detection engine for auditable compliance checks with advanced visual analytics for call-quality metrics. It successfully provides an interactive analysis application and a scalable batch-processing pipeline, establishing a strong, production-ready foundation for enterprise-grade monitoring and future integration of more complex Machine Learning models.
+**Date:** September 8, 2025
+**Live Demo:** **[https://debt-call-analyst.streamlit.app/](https://debt-call-analyst.streamlit.app/)**
 
 ---
 
-## 3. Project Overview
+## 1. Executive Summary
+
+This project was intentionally scoped to rapidly validate a deterministic, auditable system for debt collection compliance and quality monitoring. The work was not an academic exercise in model accuracy but a production-centric initiative to deliver immediate business value. We successfully engineered and deployed a complete solution, including an interactive Streamlit UI and a scalable batch-processing pipeline, in under eight focused hours.
+
+The system delivers trustworthy, actionable flags for compliance violations and profanity, provides repeatable call-quality metrics (overtalk, silence), and establishes a clear, low-risk path for future ML/LLM augmentation. The final product is a strategic, minimum-viable compliance engine: rapid to deploy, auditable for legal review, and built to scale.
+
+---
+
+## 2. Project Overview
 
 ### Goal
 The primary objective is to analyze conversations between debt collection agents and borrowers to identify and quantify key events related to compliance, professionalism, and conversational dynamics. The analysis focuses on three core areas:
@@ -21,100 +23,74 @@ The primary objective is to analyze conversations between debt collection agents
 3.  **Call-Quality Metrics:** Calculating the percentage of overtalk (simultaneous speech) and silence within each call.
 
 ### Data Format
-The input for the analysis consists of YAML files, where each file represents a single call recording. The structure of each file contains a list of utterances, with each utterance defined by:
--   **`speaker`**: `agent` or `borrower`
--   **`text`**: The transcribed content of the speech
--   **`stime`**: The start timestamp of the utterance in seconds
--   **`etime`**: The end timestamp of the utterance in seconds
+The input for the analysis consists of YAML/JSON files, where each file represents a single call. Each file contains a list of utterances, with each utterance defined by: `speaker`, `text`, `stime`, and `etime`.
 
 ---
 
-## 4. Methodology
+## 3. Methodology & Strategic Design Choices
 
-### 4.1 Profanity Detection
+### 3.1. The "Deterministic by Design" Approach
+A foundational strategic choice for this project was to prioritize an interpretable, regex-based engine over a "black box" ML model for the initial phase. This decision was made to maximize business trust, ensure 100% auditability for compliance teams, and deliver a production-ready baseline with speed and cost-efficiency. This approach also serves a secondary strategic goal: using the deterministic engine to produce a high-quality, labeled seed dataset to dramatically accelerate future ML/LLM development.
 
-**Pattern Matching:**
-A deterministic approach was implemented using a curated list of regular expressions (`regex`) stored in an external file (`profanity_patterns.txt`). The system first normalizes the utterance text (to lowercase, mapping leet-speak characters like `@` to `a`, `$` to `s`) before applying the regex patterns. This method provides high-speed, explicit, and fully auditable flagging of profane terms.
+### 3.2. Profanity & Compliance Violation Detection
+The detection logic is built on a time-based, pattern-matching algorithm.
+-   **Profanity:** Utterances are normalized (lowercase, leetspeak mapping) and matched against an externalized list of regex patterns in `patterns/profanity_patterns.txt`.
+-   **Compliance:** The system identifies timestamps for "Verification Cues" (e.g., `date of birth`, `SSN`) and "Disclosure Cues" (e.g., `balance`, `account number`). A violation is flagged if a disclosure occurs before a successful verification, providing a clear, rule-based audit trail.
 
-**ML/LLM Approach:**
-A comparative design for a Machine Learning approach was conceptualized using a fine-tuned Large Language Model (LLM) prompt system. This method is designed to identify contextually inappropriate or coded language that a simple keyword match would miss, offering a more nuanced understanding of professionalism.
-
-**Comparison:**
-The regex approach is superior in speed, cost, and interpretability, making it ideal for flagging unambiguous violations. Its weakness is a lower recall for paraphrased or context-dependent profanity. The LLM approach excels at nuance and context but comes with higher computational costs and reduced transparency ("black box" problem), making it a powerful but secondary tool for deeper investigation.
-
-### 4.2 Privacy & Compliance Violation Detection
-
-**Pattern Matching:**
-The core compliance rule—"verify before disclosing"—was implemented using a time-based regex algorithm. The system scans for two categories of cues:
-1.  **Verification Cues:** Terms like `date of birth`, `last four`, `SSN`.
-2.  **Disclosure Cues:** Terms like `balance`, `account number`, `total due`.
-A violation is flagged if the earliest timestamp of a *disclosure cue* occurs before the earliest timestamp of a *verification cue*. This provides a clear, rule-based, and auditable result.
-
-**ML/LLM Approach:**
-The LLM-based design focuses on semantic understanding. It aims to detect "implied disclosures," where an agent might hint at sensitive information without using specific keywords (e.g., "Let's talk about the amount you've owed since May").
-
-**Comparison:**
-Pattern matching provides an invaluable, high-precision tool for enforcing explicit compliance rules. The LLM approach serves as a strategic enhancement to catch subtle, context-dependent violations that are not captured by rigid patterns.
-
-### 4.3 Call-Quality Metrics
-
-**Overtalk %:**
-This metric quantifies simultaneous speech. It is calculated by identifying all time intervals where agent and borrower utterances overlap.
--   **Formula:** `(Total duration of all overlapping speech intervals / Total call duration) * 100`
--   **Logic:** The system builds lists of speech intervals for the agent and borrower, calculates the duration of their intersections, and sums them up.
-
-**Silence %:**
-This metric quantifies periods where neither party is speaking.
--   **Formula:** `(Total call duration - Total duration of all unique speaking intervals) / Total call duration * 100`
--   **Logic:** The system first creates a merged union of all speaking intervals to find the total time spent talking, then subtracts this from the total call duration.
-
-**Visualisations:**
-Results are visualized using a Plotly timeline chart that displays each speaker's utterances, with overlays highlighting periods of overtalk and silence. A pie chart also illustrates the agent vs. borrower talk-time share.
+### 3.3. Call-Quality Metrics
+-   **Overtalk %:** Calculated by summing the duration of all overlapping speech intervals and dividing by the total call time. This is computed using a precise interval intersection algorithm to ensure accuracy.
+-   **Silence %:** Calculated by finding the union of all speaking intervals to get total speech time, subtracting this from the total call duration, and dividing the result by the total call duration.
 
 ---
 
-## 5. Results
+## 4. Key Architectural Decisions
 
-The system successfully processes all call files and generates a comprehensive summary of findings. The output is available both as a visual report in the deployed Streamlit application and as batch exports in CSV/XLSX format. The key deliverable is an actionable dashboard that allows stakeholders to quickly assess call compliance and quality at a glance.
+To ensure the system was robust, maintainable, and user-friendly, we made several key architectural choices:
 
-**Sample Summary Output:**
-
-| Call ID      | Profanity (Agent) | Profanity (Borrower) | Privacy Violation | Overtalk % | Silence % |
-| :----------- | :---------------- | :------------------- | :---------------- | :--------- | :-------- |
-| `00be25b0`   | No                | No                   | No                | 2.1%       | 14.5%     |
-| `019b9e97`   | No                | No                   | **Yes**           | 0.4%       | 1.0%      |
-| `0914a991`   | **Yes**           | No                   | No                | 8.9%       | 7.3%      |
-| `09353e1f`   | No                | **Yes**              | **Yes**           | 15.2%      | 4.6%      |
-
-These results demonstrate the system's ability to flag critical events across multiple categories, providing a rich dataset for operational review and agent training.
+-   **Externalized Business Rules Engine:** Instead of hard-coding detection patterns, we store them in simple `.txt` files (`patterns/`). This crucial design choice decouples the business logic from the application code, empowering non-technical users in compliance to update rules without engineering intervention.
+-   **Resilient Data Ingestion Pipeline:** Anticipating inconsistent data formats, we engineered a robust `io_json.py` loader. It handles both JSON and YAML, automatically coerces data types, and normalizes inputs, ensuring that a single malformed file will not halt a large batch-processing run.
+-   **Modular, Extensible Codebase:** The project is structured with a clear separation of concerns (`io`, `metrics`, `detection`, `visualization`), making the system easy to maintain, test, and extend with future ML/LLM components.
 
 ---
 
-## 6. Recommendations
+## 5. Results & Visualization Analysis
 
-**Profanity Detection:**
-It is recommended to use a hybrid approach. The implemented **regex engine** should serve as the primary, real-time filter for explicit and unambiguous profanity due to its speed and auditability. An **LLM classifier** should be integrated as a secondary tool for deeper, offline analysis of calls flagged for review, allowing it to catch nuanced or coded language.
+The system successfully processes call data and outputs a comprehensive summary dashboard in the Streamlit application, with results also exportable to CSV/XLSX.
 
-**Privacy Violations:**
-Similarly, the deterministic **regex algorithm** is the recommended solution for enforcing the core "verify-before-disclose" rule. An **LLM system** should be developed in the next phase to run alongside it, specifically to identify conversations where agents imply sensitive information without using explicit keywords.
+![Summary Dashboard](reports/SS1.JPG)
+**Figure 1: Summary Dashboard.** The UI provides an at-a-glance overview of all processed calls, with color-coded flags for immediate identification of issues.
 
-**Next Steps:**
-1.  **ML Model Training:** Use the high-quality, labeled data generated by the regex engine to efficiently train and fine-tune a production-grade ML/LLM classifier.
-2.  **Regex Pattern Expansion:** Engage with compliance teams to continuously expand the externalized pattern files with new terms and phrases.
-3.  **Automated Reporting:** Develop functionality to generate per-call PDF reports for compliance audits and configure automated alerts for high-severity violations.
+![Interactive Timeline](reports/SS2.JPG)
+**Figure 2: Interactive Timeline.** For any given call, the timeline visualization provides a granular, second-by-second view of the conversation. Speaker utterances are shown as colored blocks, with overtalk highlighted in orange on the interrupting speaker and silence shown as gaps. This visual evidence is invaluable for agent coaching and dispute resolution.
 
 ---
 
-## 7. Conclusion
+## 6. Technical Challenges & Mitigation
 
-This sprint delivered a fully functional compliance analysis system, a robust comparative evaluation framework, and a suite of clear visual analytics—all packaged in a modular and extensible architecture. The project successfully proves the value of an automated monitoring tool and provides immediate, tangible assets for the compliance and quality assurance teams. The next phase will focus on scaling the system's detection intelligence and integrating its outputs into daily operational workflows.
+The engineering process involved overcoming several real-world challenges to build a production-grade application:
+-   **Challenge:** Inconsistent return types from detection functions causing pipeline failures.
+    -   **Mitigation:** Enforced strict, guaranteed return schemas (always `dict` with expected keys) for all detector functions and added defensive checks in the batch processing script.
+-   **Challenge:** Visualization libraries interpreting timestamps as epoch dates (1970), resulting in blank plots.
+    -   **Mitigation:** Implemented a normalization layer to ensure all call timelines start at `t=0` and forced the plot axis to a linear scale, making the visuals robust and intuitive.
+-   **Challenge:** Initial overtalk logic double-counting overlapping speech segments.
+    -   **Mitigation:** Implemented a precise interval-merging algorithm to accurately calculate the union of speech intervals, ensuring defensible and auditable metrics.
 
 ---
 
-## 8. References
+## 7. Recommendations & Future Roadmap
 
-The implementation of this project relied on the following core Python libraries and frameworks:
--   **Streamlit:** For building and deploying the interactive web application.
--   **Pandas:** For data manipulation and aggregation.
--   **Plotly:** For generating interactive timeline visualizations and charts.
--   **PyYAML:** For parsing the input YAML call files.
+This project has successfully established a high-trust foundation. The following next steps are recommended to build upon this momentum:
+
+1.  **Phase 2: ML/LLM Integration:**
+    -   Develop a prompt-based LLM classifier to run in parallel with the regex engine, focusing on detecting nuanced, context-dependent compliance risks.
+    -   Use the regex engine's outputs as a seed dataset to fine-tune a supervised ML model, reducing annotation costs and accelerating development.
+2.  **Enhanced Reporting & Operationalization:**
+    -   Develop functionality to generate per-call PDF summary reports for compliance audits.
+    -   Configure automated alerts (e.g., via Slack or email) for high-severity violations.
+    -   Containerize the application with Docker for seamless deployment and set up a CI/CD pipeline for automated testing.
+
+---
+
+## 8. Conclusion
+
+This project delivered a fully functional, production-ready compliance and quality analysis system. It successfully balances the immediate need for an auditable, deterministic tool with the strategic goal of creating a clean upgrade path to more advanced AI. The delivered assets—including the interactive Streamlit application and the scalable batch pipeline—provide immediate, tangible value and form a robust foundation for building a next-generation, data-driven call monitoring platform.
